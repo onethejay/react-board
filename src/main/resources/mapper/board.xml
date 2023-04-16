@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN" "http://mybatis.org/schema/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.reactboard.db.BoardMapper">
+    <select id="getBoardList" parameterType="Map" resultType="com.example.reactboard.db.BoardEntity">
+        SELECT IDX
+        , TITLE
+        , CONTENTS
+        , CREATED_BY
+        , CREATED_AT
+        FROM TB_BOARD
+        WHERE 1=1
+
+        <if test="sk != '' || sk != null">
+            <if test="sk == 'title'">
+                AND TITLE LIKE CONCAT('%', #{sv}, '%')
+            </if>
+            <if test="sk == 'contents'">
+                AND CONTENTS LIKE CONCAT('%', #{sv}, '%')
+            </if>
+            <if test="sk == 'createdBy'">
+                AND CREATED_BY LIKE CONCAT('%', #{sv}, '%')
+            </if>
+        </if>
+        ORDER BY IDX DESC
+        LIMIT #{page}, #{size}
+    </select>
+
+    <select id="getBoardTotalCount" parameterType="Map" resultType="Int">
+        SELECT COUNT(IDX)
+        FROM TB_BOARD
+        WHERE 1=1
+        <if test="sk != '' || sk != null">
+            <if test="sk == 'title'">
+                AND TITLE LIKE CONCAT('%', #{sv}, '%')
+            </if>
+            <if test="sk == 'contents'">
+                AND CONTENTS LIKE CONCAT('%', #{sv}, '%')
+            </if>
+            <if test="sk == 'createdBy'">
+                AND CREATED_BY LIKE CONCAT('%', #{sv}, '%')
+            </if>
+        </if>
+    </select>
+
+    <select id="getBoardOne" parameterType="Long" resultType="com.example.reactboard.db.BoardEntity">
+        SELECT IDX
+        , TITLE
+        , CONTENTS
+        , CREATED_BY
+        , CREATED_AT
+        FROM TB_BOARD
+        WHERE IDX = #{idx}
+    </select>
+
+    <insert id="insertBoard" parameterType="com.example.reactboard.db.BoardEntity" keyProperty="idx" useGeneratedKeys="true">
+        INSERT INTO TB_BOARD
+        (
+        TITLE
+        , CONTENTS
+        , CREATED_BY
+        , CREATED_AT
+        ) VALUES (
+        #{title}
+        , #{contents}
+        , #{createdBy}
+        , NOW()
+        )
+    </insert>
+
+    <update id="updateBoard" parameterType="com.example.reactboard.db.BoardEntity">
+        UPDATE TB_BOARD
+        SET TITLE = #{title}
+        , CONTENTS = #{contents}
+        WHERE IDX = #{idx}
+    </update>
+
+    <delete id="deleteBoard" parameterType="Long">
+        DELETE FROM TB_BOARD
+        WHERE IDX = #{idx}
+    </delete>
+</mapper>

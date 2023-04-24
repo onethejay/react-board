@@ -15,7 +15,7 @@ const BoardDetail = () => {
 
   useEffect(() => {
     getBoard();
-  });
+  }, []);
 
   return (
     <div>

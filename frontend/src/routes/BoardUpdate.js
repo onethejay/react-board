@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const BoardWrite = () => {
+const BoardUpdate = () => {
   const navigate = useNavigate();
-
+  const { idx } = useParams(); // /update/:idx와 동일한 변수명으로 데이터를 꺼낼 수 있습니다.
   const [board, setBoard] = useState({
+    idx: 0,
     title: '',
     createdBy: '',
     contents: '',
@@ -21,16 +22,25 @@ const BoardWrite = () => {
     });
   };
 
-  const saveBoard = async () => {
-    await axios.post(`//localhost:8080/board`, board).then((res) => {
-      alert('등록되었습니다.');
-      navigate('/board');
+  const getBoard = async () => {
+    const resp = await (await axios.get(`//localhost:8080/board/${idx}`)).data;
+    setBoard(resp.data);
+  };
+
+  const updateBoard = async () => {
+    await axios.patch(`//localhost:8080/board`, board).then((res) => {
+      alert('수정되었습니다.');
+      navigate('/board/' + idx);
     });
   };
 
-  const backToList = () => {
-    navigate('/board');
+  const backToDetail = () => {
+    navigate('/board/' + idx);
   };
+
+  useEffect(() => {
+    getBoard();
+  }, []);
 
   return (
     <div>
@@ -41,12 +51,7 @@ const BoardWrite = () => {
       <br />
       <div>
         <span>작성자</span>
-        <input
-          type="text"
-          name="createdBy"
-          value={createdBy}
-          onChange={onChange}
-        />
+        <input type="text" name="createdBy" value={createdBy} readOnly={true} />
       </div>
       <br />
       <div>
@@ -61,11 +66,11 @@ const BoardWrite = () => {
       </div>
       <br />
       <div>
-        <button onClick={saveBoard}>저장</button>
-        <button onClick={backToList}>취소</button>
+        <button onClick={updateBoard}>수정</button>
+        <button onClick={backToDetail}>취소</button>
       </div>
     </div>
   );
 };
 
-export default BoardWrite;
+export default BoardUpdate;

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import Pagination from '../components/Pagination';
 
 const BoardList = () => {
   const navigate = useNavigate();
   const [boardList, setBoardList] = useState([]);
+  const [pagination, setPagination] = useState({});
 
   const getBoardList = async () => {
     const resp = await (await axios.get('//localhost:8080/board')).data; // 2) 게시글 목록 데이터에 할당
     setBoardList(resp.data); // 3) boardList 변수에 할당
 
     const pngn = resp.pagination;
-    console.log(pngn);
+    setPagination(pngn);
   };
 
   const moveToWrite = () => {
@@ -32,6 +34,9 @@ const BoardList = () => {
           </li>
         ))}
       </ul>
+
+      <Pagination pagination={pagination} />
+
       <div>
         <button onClick={moveToWrite}>글쓰기</button>
       </div>

@@ -32,8 +32,8 @@ public class BoardService {
         List<BoardEntity> boardList = boardMapper.getBoardList(paramMap);
         Pagination pagination = new Pagination(
                 boardMapper.getBoardTotalCount(paramMap),
-                (int) paramMap.get("page") + 1,
-                (int) paramMap.get("size"),
+                page,
+                size,
                 10
         );
 

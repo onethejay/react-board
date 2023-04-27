@@ -32,15 +32,20 @@ const Pagination = ({ pagination }) => {
     totalPageCnt,
   } = pagination;
 
-  useEffect(() => {
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-  }, [pagination]);
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  const onClick = (event) => {
+    console.log(event.target.value);
+  };
+
   return (
     <div style={{ paddingTop: 5, paddingBottom: 10 }}>
-      {pages.map((value) => (
-        <button key={value}>{value}</button>
+      {pages.map((page, index) => (
+        <button key={index} onClick={onClick} value={page}>
+          {page}
+        </button>
       ))}
     </div>
   );

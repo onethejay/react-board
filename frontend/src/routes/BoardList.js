@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const BoardList = () => {
   const navigate = useNavigate();
@@ -8,36 +8,26 @@ const BoardList = () => {
   const [boardList, setBoardList] = useState([]);
   const [pageList, setPageList] = useState([]);
 
-  const [curPage, setCurPage] = useState(1);
-  const [startPage, setStartPage] = useState(0);
-  const [endPage, setEndPage] = useState(0);
-  const [prevBlock, setPrevBlock] = useState(0);
-  const [nextBlock, setNextBlock] = useState(0);
-  const [lastPage, setLastPage] = useState(0);
+  const [curPage, setCurPage] = useState(1); //현재 페이지 세팅
+  const [prevBlock, setPrevBlock] = useState(0); //이전 페이지 블록
+  const [nextBlock, setNextBlock] = useState(0); //다음 페이지 블록
+  const [lastPage, setLastPage] = useState(0); //마지막 페이지
 
   const getBoardList = async (page) => {
+    if (page === curPage) return; //현재 페이지와 누른 페이지가 같으면 return
+
     if (!page) page = 1;
+
     const resp = await (
       await axios.get('//localhost:8080/board?page=' + page)
     ).data; // 2) 게시글 목록 데이터에 할당
-    setBoardList(resp.data); // 3) boardList 변수에 할당
 
+    setBoardList(resp.data); // 3) boardList 변수에 할당
     const pngn = resp.pagination;
 
-    console.log(pngn);
+    const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } = pngn;
 
-    const {
-      endPage,
-      nextBlock,
-      prevBlock,
-      startIndex,
-      startPage,
-      totalPageCnt,
-    } = pngn;
-
-    setCurPage(startPage);
-    setStartPage(startIndex);
-    setEndPage(endPage);
+    setCurPage(page);
     setPrevBlock(prevBlock);
     setNextBlock(nextBlock);
     setLastPage(totalPageCnt);
@@ -55,7 +45,8 @@ const BoardList = () => {
   };
 
   const onClick = (event) => {
-    getBoardList(event.target.value);
+    let value = event.target.value;
+    getBoardList(value);
   };
 
   useEffect(() => {
